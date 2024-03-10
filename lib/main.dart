@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import './models/dog.dart';
+import './db.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -55,7 +57,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final DBProvider _db = DBProvider();
+
   int _counter = 0;
+
+  Future<List<Dog>> _getDogs() async {
+    return await _db.dogs();
+  }
+
+  Future<void> _addDogs() async {
+    var fido = Dog(
+      id: 0,
+      name: 'Fido',
+      age: 35,
+    );
+    await _db.insertDog(fido);
+    print(await _getDogs());
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -116,7 +134,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        // onPressed: _incrementCounter,
+        onPressed: _addDogs,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
