@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import './common_widgets/dog_builder.dart';
 import './models/dog.dart';
+import './connection_status.dart';
 import './db.dart';
 
-void main() async {
+void main() {
   runApp(const MyApp());
+  ConnectionStatusService().initialize();
 }
 
 class MyApp extends StatelessWidget {
