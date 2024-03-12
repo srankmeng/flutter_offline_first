@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Dog {
   final int? id;
   final String name;
@@ -18,6 +20,18 @@ class Dog {
       'age': age,
     };
   }
+
+  factory Dog.fromMap(Map<String, dynamic> map) {
+    return Dog(
+      id: map['id']?.toInt() ?? 0,
+      name: map['name'] ?? '',
+      age: map['age']?.toInt() ?? 0,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Dog.fromJson(String source) => Dog.fromMap(json.decode(source));
 
   // Implement toString to make it easier to see information about
   // each dog when using the print statement.
