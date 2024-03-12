@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import './models/dog.dart';
 import './db.dart';
@@ -59,31 +61,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final DBProvider _db = DBProvider();
 
-  int _counter = 0;
-
   Future<List<Dog>> _getDogs() async {
     return await _db.dogs();
   }
 
-  Future<void> _addDogs() async {
-    var fido = Dog(
-      id: 0,
-      name: 'Fido',
-      age: 35,
+  Future<void> _addDog() async {
+    var data = Dog(
+      name: 'Doggie',
+      age: Random().nextInt(100),
     );
-    await _db.insertDog(fido);
+    await _db.insertDog(data);
     print(await _getDogs());
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
   }
 
   @override
@@ -104,39 +92,85 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FutureBuilder<List<Dog>>(
+              future: _getDogs(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text("Loading ...");
+                }
+                return Table(
+                  columnWidths: const {
+                    0: FixedColumnWidth(100.0),
+                    1: FixedColumnWidth(50.0)
+                  }, // Set fixed column widths
+                  border: TableBorder.all(
+                    color: Colors.grey, // Set border color
+                    style: BorderStyle.solid,
+                    width: 1.0, // Set border width
+                  ),
+                  children: const [
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(8.0), // Add padding to cells
+                          child: Text(
+                            'Name',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Age',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Alice',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            '30',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+                // return BreedSelector(
+                //   breeds: _breeds.map((e) => e.name).toList(),
+                //   selectedIndex: _selectedBreed,
+                //   onChanged: (value) {
+                //     setState(() {
+                //       _selectedBreed = value;
+                //     });
+                //   },
+                // );
+              },
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        // onPressed: _incrementCounter,
-        onPressed: _addDogs,
-        tooltip: 'Increment',
+        onPressed: _addDog,
+        tooltip: 'Add Dog',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
