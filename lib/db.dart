@@ -29,7 +29,7 @@ class DBProvider {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(
-      'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER, version INTEGER)',
+      'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER, version INTEGER, status TEXT)',
     );
   }
 
@@ -42,17 +42,20 @@ class DBProvider {
     );
   }
 
-  Future<List<Dog>> dogs() async {
+  Future<List<Dog>> dogs(String mode) async {
     final db = await dbProvider.database;
-    final List<Map<String, Object?>> dogMaps = await db.query('dogs');
+    final List<Map<String, Object?>> dogMaps = mode == 'all'
+        ? await db.query('dogs')
+        : await db.query('dogs', where: 'status != ?', whereArgs: ['deleted']);
     return [
       for (final {
             'id': id as int,
             'name': name as String,
             'age': age as int,
             'version': version as int,
+            'status': status as String,
           } in dogMaps)
-        Dog(id: id, name: name, age: age, version: version),
+        Dog(id: id, name: name, age: age, version: version, status: status),
     ];
   }
 

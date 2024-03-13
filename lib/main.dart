@@ -1,17 +1,46 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import './common_widgets/dog_builder.dart';
 import './models/dog.dart';
 import './connection_status.dart';
 import './db.dart';
-import './sync_data.dart';
+
+final DBProvider _db = DBProvider();
 
 void main() {
   runApp(const MyApp());
-  ConnectionStatusService().initialize();
-  initSyncData();
+  connectionStatus.initialize();
+  _syncData();
+}
+
+void _syncData() async {
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
+    if (connectionStatus.hasConnection) {
+      var dogs = await _db.dogs('all');
+      for (var item in dogs) {
+        try {
+          final response =
+              await http.put(Uri.parse('http://10.0.2.2:8001/api/v1/dog'),
+                  headers: {"Content-Type": "application/json"},
+                  body: jsonEncode({
+                    "id": item.id,
+                    "name": item.name,
+                    "age": item.age,
+                    "version": item.version,
+                    "status": item.status,
+                  }));
+          if (response.statusCode != 200) {
+            print('Error updating data on server: ${response.statusCode}');
+          }
+        } catch (error) {
+          print('Error during synchronization: $error');
+        }
+      }
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -65,10 +94,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final DBProvider _db = DBProvider();
-
   Future<List<Dog>> _getDogs() async {
-    return await _db.dogs();
+    return await _db.dogs('active');
   }
 
   Future<void> _addDog() async {
@@ -76,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
       name: 'Doggie',
       age: Random().nextInt(18),
       version: 1,
+      status: '',
     );
     await _db.insertDog(data);
     setState(() {});
@@ -87,13 +115,21 @@ class _MyHomePageState extends State<MyHomePage> {
       name: '${dog.name} E',
       age: dog.age,
       version: dog.version + 1,
+      status: dog.status,
     );
     await _db.updateDog(data);
     setState(() {});
   }
 
   Future<void> _deleteDog(Dog dog) async {
-    await _db.deleteDog(dog.id!);
+    var data = Dog(
+      id: dog.id,
+      name: dog.name,
+      age: dog.age,
+      version: dog.version + 1,
+      status: 'deleted',
+    );
+    await _db.updateDog(data);
     setState(() {});
   }
 

@@ -5,12 +5,14 @@ class Dog {
   final String name;
   final int age;
   final int version;
+  final String status;
 
   Dog({
     this.id,
     required this.name,
     required this.age,
     required this.version,
+    required this.status,
   });
 
   // Convert a Dog into a Map. The keys must correspond to the names of the
@@ -21,6 +23,7 @@ class Dog {
       'name': name,
       'age': age,
       'version': version,
+      'status': status,
     };
   }
 
@@ -30,6 +33,7 @@ class Dog {
       name: map['name'] ?? '',
       age: map['age']?.toInt() ?? 0,
       version: map['version']?.toInt() ?? 0,
+      status: map['status'] ?? '',
     );
   }
 
@@ -41,6 +45,6 @@ class Dog {
   // each dog when using the print statement.
   @override
   String toString() {
-    return 'Dog{id: $id, name: $name, age: $age, version: $version}';
+    return 'Dog{id: $id, name: $name, age: $age, version: $version, status: $status}';
   }
 }

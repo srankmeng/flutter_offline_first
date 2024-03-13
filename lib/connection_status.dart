@@ -29,7 +29,8 @@ class ConnectionStatusService {
     bool previousConnection = hasConnection;
 
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:3002/posts'));
+      final response =
+          await http.get(Uri.parse('http://10.0.2.2:8001/api/v1/dog'));
       if (response.statusCode == 200) {
         hasConnection = true;
       } else {
@@ -59,3 +60,5 @@ class ConnectionStatusService {
     connectionChangeController.close();
   }
 }
+
+final connectionStatus = ConnectionStatusService();
