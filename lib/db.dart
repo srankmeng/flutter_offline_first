@@ -29,7 +29,7 @@ class DBProvider {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(
-      'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER)',
+      'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT, age INTEGER, version INTEGER)',
     );
   }
 
@@ -50,8 +50,9 @@ class DBProvider {
             'id': id as int,
             'name': name as String,
             'age': age as int,
+            'version': version as int,
           } in dogMaps)
-        Dog(id: id, name: name, age: age),
+        Dog(id: id, name: name, age: age, version: version),
     ];
   }
 

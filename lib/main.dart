@@ -72,8 +72,20 @@ class _MyHomePageState extends State<MyHomePage> {
     var data = Dog(
       name: 'Doggie',
       age: Random().nextInt(18),
+      version: 1,
     );
     await _db.insertDog(data);
+    setState(() {});
+  }
+
+  Future<void> _editDog(Dog dog) async {
+    var data = Dog(
+      id: dog.id,
+      name: '${dog.name} E',
+      age: dog.age,
+      version: dog.version + 1,
+    );
+    await _db.updateDog(data);
     setState(() {});
   }
 
@@ -99,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   DogBuilder(
                     dogs: _getDogs(),
+                    onEdit: _editDog,
                     onDelete: _deleteDog,
                   ),
                 ],

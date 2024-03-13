@@ -5,9 +5,11 @@ class DogBuilder extends StatelessWidget {
   const DogBuilder({
     Key? key,
     required this.dogs,
+    required this.onEdit,
     required this.onDelete,
   }) : super(key: key);
   final Future<List<Dog>> dogs;
+  final Function(Dog) onEdit;
   final Function(Dog) onDelete;
 
   @override
@@ -68,26 +70,28 @@ class DogBuilder extends StatelessWidget {
                   Row(
                     children: [
                       Text('Age: ${dog.age.toString()}'),
+                      const SizedBox(width: 16.0),
+                      Text('Version: ${dog.version.toString()}'),
                     ],
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 20.0),
-            // GestureDetector(
-            //   onTap: () => onEdit(dog),
-            //   child: Container(
-            //     height: 40.0,
-            //     width: 40.0,
-            //     decoration: BoxDecoration(
-            //       shape: BoxShape.circle,
-            //       color: Colors.grey[200],
-            //     ),
-            //     alignment: Alignment.center,
-            //     child: Icon(Icons.edit, color: Colors.orange[800]),
-            //   ),
-            // ),
-            // const SizedBox(width: 20.0),
+            GestureDetector(
+              onTap: () => onEdit(dog),
+              child: Container(
+                height: 40.0,
+                width: 40.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[200],
+                ),
+                alignment: Alignment.center,
+                child: Icon(Icons.edit, color: Colors.orange[800]),
+              ),
+            ),
+            const SizedBox(width: 20.0),
             GestureDetector(
               onTap: () => onDelete(dog),
               child: Container(
