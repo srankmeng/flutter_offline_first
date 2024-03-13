@@ -1,6 +1,6 @@
 import 'dart:io'; //InternetAddress utility
 import 'dart:async'; //For StreamController/Stream
-
+import 'package:http/http.dart' as http;
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectionStatusService {
@@ -29,9 +29,8 @@ class ConnectionStatusService {
     bool previousConnection = hasConnection;
 
     try {
-      final result = await _connectivity.checkConnectivity();
-      if (result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile) {
+      final response = await http.get(Uri.parse('http://10.0.2.2:3002/posts'));
+      if (response.statusCode == 200) {
         hasConnection = true;
       } else {
         hasConnection = false;

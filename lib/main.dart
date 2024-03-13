@@ -107,18 +107,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      // body: Padding(
-      //   padding: const EdgeInsets.all(12.0),
-      //   child: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.stretch,
-      //     children: [
-      //       DogBuilder(
-      //         dogs: _getDogs(),
-      //         // onDelete: _onDogDelete,
-      //       ),
-      //     ],
-      //   ),
-      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: _addDog,
         tooltip: 'Add Dog',
